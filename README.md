@@ -90,6 +90,23 @@ Cross-compile the workspace
 
 The result of the cross-compilation will be found in `~/ros2_cc_ws/install`.
 
+#### Debug options
+
+If you are runing the compilation steps one by one, you can also add a debug flag to the last command:
+
+     bash cc_workspace.sh ~/ros2_cc_ws --debug
+
+This will let you go inside the Docker container used for compilation rather than starting the compilation process.
+Once you are inside you can start building using any of the following scripts, depending on your target architecture:
+
+     /root/compilation_scripts/compile.sh
+     /root/compilation_scripts/cross_compile.sh
+     
+Running in this debug mode also allows you to easily modify these scripts.
+Common modifications are the following:
+ - Comment the line at the beginning where it clears the build directory.
+ - Add arguments to the colcon command, for example `--packages-select XX` to build only that package or `--packages-up-to XX` to build only that package and its dependencies.
+
 ## Use cross-compiled ROS 2 packages
 
 Copy the `install` directory from the cross-compiled workspace to your target platform.
