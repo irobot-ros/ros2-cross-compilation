@@ -5,7 +5,15 @@ LABEL maintainer="Alberto Soragna asoragna at irobot dot com"
 # install Fast-RTPS dependencies
 RUN apt-get install --no-install-recommends -y \
   libasio-dev \
-  libtinyxml2-dev
+  libtinyxml2-dev \
+  libeigen3-dev \
+  xorg-dev \
+  liblog4cxx-dev \
+  qt5-default \
+  python3-pyqt5 \
+  libopencv-dev \
+  libbullet-dev \
+  pyqt5-dev 
 
 RUN pip3 install \
   numpy
