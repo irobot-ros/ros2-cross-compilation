@@ -17,7 +17,7 @@ fi
 git config --global --add safe.directory '*'
 
 # clear out everything first
-rm -rf build install log
+#rm -rf build install log
 
 ROS2_SETUP=/root/sysroot/setup.bash
 if [ -f "$ROS2_SETUP" ]; then
