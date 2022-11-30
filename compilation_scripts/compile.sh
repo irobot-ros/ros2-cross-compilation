@@ -2,6 +2,8 @@
 
 ## script for compiling the current workspace
 
+source /root/.bashrc
+
 # clear out everything first
 rm -rf build install log
 

@@ -62,7 +62,7 @@ else
 fi
 
 INTERACTIVE_DOCKER_ARG="-it"
-COMMAND=(/bin/bash -c "source /root/.bashrc && bash $COMPILATION_SCRIPT")
+COMMAND=(/bin/bash -c "bash $COMPILATION_SCRIPT")
 
 for i in "$@"
 do

@@ -4,7 +4,7 @@
 # TARGET=[raspbian]
 
 # Set env variables
-ROS2_DISTRO="${ROS2_DISTRO:=master}"
+ROS2_DISTRO="${ROS2_DISTRO:=rolling}"
 
 # Check that all variables are defined before start
 if [[ -z "$TARGET" ]]
@@ -70,6 +70,7 @@ vcs export --exact $WORKSPACE_DIR/src > $ROS2_SRCS_HEADS
 CC_CMD="bash $THIS_DIR/cc_workspace.sh $WORKSPACE_DIR --no-it"
 if ! $CC_CMD; then
   echo "Error: the cross-compilation step failed"
+  rm -rf $RESULTS_DIR
   exit 1
 fi
 

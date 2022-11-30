@@ -28,22 +28,34 @@ The supported architectures are:
 
 ## Requirements
 
- - Docker
+This tool requires a Linux-based OS.
+It is tested only on Ubuntu 20.04, other distributions may or may not work.
 
-If you don't have Docker installed follow [this link](../docker_setup.md).
-Ensure that you have support for building and running ARM Docker containers.
+ - Install Docker following official instructions https://docs.docker.com/desktop/install/linux-install/
+ - Manage Docker as non-root user (log out and log back in after running the commands)
+ ```
+ sudo groupadd docker
+ sudo usermod -aG docker $USER
+ ```
+ - Install qemu dependencies
+ ```
+ sudo apt-get update && sudo apt-get install qemu binfmt-support qemu-user-static
+ docker run --rm --privileged multiarch/qemu-user-static --reset -p yes --credential yes
+ docker run --rm -t arm64v8/ubuntu uname -m
+ ```
+ - Install additional minor requirements
+ ```
+ sudo apt-get update && sudo apt-get install -y curl gnupg2 lsb-release software-properties-common
+ sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+ sudo apt-get update && sudo apt-get install -y python3-vcstool wget
+ ```
 
-Install some other dependencies
+## Build the Framework
 
 ```
-sudo apt update && sudo apt install -y curl gnupg2 lsb-release software-properties-common
-curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
-sudo apt update && sudo apt install -y python3-vcstool wget
+bash build.sh
 ```
-
-## Build
-
-    bash build.sh
 
 This will build the cross-compilation framework.
 It mainly consists of a bunch of `Dockerfile`s which provide a Docker environment with all the cross-compilation dependencies installed for each of the supported architectures.
@@ -65,7 +77,9 @@ Let's go through an example showing how to manually cross-compile ROS 2 Foxy SDK
 
 Source the environment variables for this architecture using
 
-    source env.sh raspbian
+```
+source env.sh raspbian
+```
 
 Create a sysroot for the architecture.
 This command will download a sysroot for the archicture specified by the `TARGET_ARCHITECTURE` environment variable (the argument passed to the `env.sh` script above, `raspbian` in this case).
@@ -73,7 +87,9 @@ Note that if you already have a sysroot with the same name inside the `sysroots`
 
 If you want to use your own sysroot, instead of generating a new one, you can skip the last instruction and just place your sysroot in the `sysroots` directory. Your sysroot directory must be renamed to `raspbian` or as the specified `TARGET_ARCHITECTURE` that you passed to `env.sh`.
 
-    bash get_sysroot.sh
+```
+bash get_sysroot.sh
+```
 
 Create a ROS 2 workspace that you want to cross-compile.
  - The cross-compilation script will mount the workspace as a Docker volume. This does not go well with symbolic links. For this reason ensure that the workspace contains the whole source code and not a symlink to the repositories.
@@ -82,11 +98,15 @@ Create a ROS 2 workspace that you want to cross-compile.
 We provide convenient scripts for downloading the ROS 2 sources for a specific distribution.
 If you want to cross-compile generic ROS 2 packages, see the [advanced section](advanced.md).
 
-    bash get_ros2_sources.sh --distro=foxy --ros2-path=~/ros2_cc_ws
+```
+bash get_ros2_sources.sh --distro=foxy --ros2-path=~/ros2_cc_ws
+```
 
 Cross-compile the workspace
 
-    bash cc_workspace.sh ~/ros2_cc_ws
+```
+bash cc_workspace.sh ~/ros2_cc_ws
+```
 
 The result of the cross-compilation will be found in `~/ros2_cc_ws/install`.
 
@@ -94,14 +114,18 @@ The result of the cross-compilation will be found in `~/ros2_cc_ws/install`.
 
 If you are runing the compilation steps one by one, you can also add a debug flag to the last command:
 
-     bash cc_workspace.sh ~/ros2_cc_ws --debug
+```
+bash cc_workspace.sh ~/ros2_cc_ws --debug
+```
 
 This will let you go inside the Docker container used for compilation rather than starting the compilation process.
 Once you are inside you can start building using any of the following scripts, depending on your target architecture:
 
-     /root/compilation_scripts/compile.sh
-     /root/compilation_scripts/cross_compile.sh
-     
+```
+/root/compilation_scripts/compile.sh
+/root/compilation_scripts/cross_compile.sh
+```
+
 Running in this debug mode also allows you to easily modify these scripts.
 Common modifications are the following:
  - Comment the line at the beginning where it clears the build directory.
